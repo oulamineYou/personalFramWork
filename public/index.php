@@ -8,7 +8,7 @@ use Symfony\Component\Routing\RequestContext;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-$routes = require __DIR__.'/../src/app.php';
+$routes = require __DIR__.'/../src/routes.php';
 $request = Request::createFromGlobals();
 $context = new RequestContext();
 $context->fromRequest($request);
@@ -17,10 +17,8 @@ $urlMatch = new UrlMatcher($routes, $context);
 
 
 try {
-    extract($urlMatch->match($request->getPathInfo()), EXTR_SKIP);
-    ob_start();
-    require sprintf(__DIR__.'/../src/pages/%s.php', $_route);
-    $response = new Response(ob_get_clean());
+    $request->attributes->add($urlMatch->match($request->getPathInfo()));
+    $response = call_user_func($request->attributes->get('_controller'), $request);
 } catch (ResourceNotFoundException $exp) {
     $response = new Response('page introvable', 404);
 }catch(Exception $exp){
