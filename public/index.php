@@ -1,34 +1,19 @@
 <?
 //front Contreller
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
-
 require_once __DIR__.'/../vendor/autoload.php';
 
 $routes = require __DIR__.'/../src/routes.php';
-$request = Request::createFromGlobals();
-$context = new RequestContext();
-$context->fromRequest($request);
+
+$request = Symfony\Component\HttpFoundation\Request::createFromGlobals();
+
 //récupérer le path et les paramtéres de lien sous forme d'u tableau ['_route'=>'/hello, 'name'=>bonsoir];
-$urlMatch = new UrlMatcher($routes, $context);
+$urlMatch = new Symfony\Component\Routing\Matcher\UrlMatcher($routes, new Symfony\Component\Routing\RequestContext());
 
-$controllerResolver = new ControllerResolver();
-$argumentResolver = new ArgumentResolver();
+$controllerResolver = new Symfony\Component\HttpKernel\Controller\ControllerResolver();
+$argumentResolver = new Symfony\Component\HttpKernel\Controller\ArgumentResolver();
 
-try {
-    $request->attributes->add($urlMatch->match($request->getPathInfo()));
-    $controller = $controllerResolver->getController($request);
-    $arguments = $argumentResolver->getArguments($request, $controller);
-    $response = call_user_func_array($controller, $arguments);
-} catch (ResourceNotFoundException $exp) {
-    $response = new Response('page introvable', 404);
-}catch(Exception $exp){
-    $response = new Response('An error occurred', 500);
-}
+$framwork = new App\Core\FrameWork($urlMatch, $controllerResolver, $argumentResolver);
+
+$response = $framwork->handle($request);
 
 $response->send();
