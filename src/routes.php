@@ -10,10 +10,7 @@ $routes = new RouteCollection();
 $routes->add('hello', new Route("/hello/{name}",
     [
         "name" => "world",
-        "_controller" => function(Request $request){
-            $response = App\Controller\AbstractController::render_template($request);
-            return $response;
-        }
+        "_controller" => 'App\Controller\AbstractController::render_template'
     ]
 ));
 

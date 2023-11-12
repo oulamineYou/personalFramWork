@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AbstractController
 {
-    public static function render_template(Request $request):Response
+    public function render_template(Request $request):Response
     {
         extract($request->attributes->all(), EXTR_SKIP);
         ob_start();
