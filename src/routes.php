@@ -16,4 +16,10 @@ $routes->add('hello', new Route("/hello/{name}",
 
 $routes->add('bye', new Route("/bye", ["_controller" => 'App\Controller\AbstractController::render_template']));
 
+$routes->add('benchmark', new Route("/benchmark", ["_controller" => 'App\Controller\AbstractController::render_template']));
+
+$routes->add('session-hang', new Route("/session-hang", ["_controller" => 'App\Controller\AbstractController::render_template']));
+
+$routes->add('file', new Route("/file", ["_controller" => 'App\Controller\AbstractController::render_template']));
+
 return $routes;
